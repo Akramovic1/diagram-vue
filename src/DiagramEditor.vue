@@ -9,6 +9,7 @@
     <VButton @click="downloadSVG">Download SVG</VButton>
     <VButton @click="isAskClearDiagram = true">Clear Diagram</VButton>
     <VButton @click="openSettingsModal">Settings</VButton>
+    <VButton @click="$emit('start', this.graphData.nodes)">Start</VButton>
     <AskModal :isActive="isAskClearDiagram" @ok="clearDiagram" @cancel="cancel">
       Do you wanna clear the Diagram?
     </AskModal>
