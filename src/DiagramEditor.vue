@@ -1,15 +1,27 @@
 <template>
   <div id="editor">
-    <VButton v-if="!editable" @click="editable = true">Edit</VButton>
+    <div>
+    <VButton class="btn btn2" v-if="!editable" @click="editable = true"><i class="fas fa-edit"></i> &nbsp;Edit</VButton>
     <span v-else>
-      <VButton @click="openModal">New Node</VButton>
-      <VButton @click="endEdit">End</VButton>
+      <VButton class="btn btn2" @click="openModal">New Node</VButton>
+      <VButton class="btn btn2" @click="endEdit">Finish</VButton>
     </span>
-    <VButton @click="openInputModal">Import/Export</VButton>
-    <VButton @click="downloadSVG">Download SVG</VButton>
-    <VButton @click="isAskClearDiagram = true">Clear Diagram</VButton>
-    <VButton @click="openSettingsModal">Settings</VButton>
-    <VButton @click="$emit('start', this.graphData.nodes)">Start</VButton>
+    <VButton class="btn btn2" @click="openInputModal"><i class="fas fa-file-import"></i>  &nbsp;Import/Export</VButton>
+    <VButton class="btn btn2" @click="downloadSVG"><i class="fas fa-download"></i>  &nbsp; Download SVG</VButton>
+    <VButton class="btn btn2" @click="isAskClearDiagram = true"><i class="fas fa-trash-alt"></i>  &nbsp;Clear Diagram</VButton>
+    <VButton class="btn btn2" @click="openSettingsModal"><i class="fas fa-cogs"></i>  &nbsp;Settings</VButton>
+    <VButton class="btn btn2" @click="start"><i class="fas fa-play-circle"></i>  &nbsp;Start</VButton>
+    <VButton class="btn btn2" @click="end"><i class="fas fa-stop"></i> &nbsp; End</VButton>
+    &nbsp;
+    &nbsp;
+    <i class="fas fa-sitemap"></i>
+    &nbsp;
+    <VInput class="vinput"
+          type="number"
+          v-model="numberOfProducts"
+          placeholder="Number Of Products"
+        />
+        </div>
     <AskModal :isActive="isAskClearDiagram" @ok="clearDiagram" @cancel="cancel">
       Do you wanna clear the Diagram?
     </AskModal>
@@ -83,6 +95,7 @@ import EditLinkModal from "@/lib/EditLinkModal";
 import InputModal from "@/lib/InputModal";
 import AskModal from "@/lib/AskModal";
 import SettingsModal from "@/lib/SettingsModal";
+import VInput from "@/minimal-ui/lib/VInput";
 export default {
   name: "DiagramEditor",
   components: {
@@ -110,7 +123,7 @@ export default {
             copy: "Copy"
           },
           nodes: [],
-          links: []
+          links: [],
         };
       }
     }
@@ -123,7 +136,7 @@ export default {
       set(val) {
         this.$emit("input", val);
       }
-    }
+    },
   },
   data() {
     return {
@@ -161,12 +174,40 @@ export default {
           color: "",
           pattern: "solid",
           arrow: "none"
-        }
+        },
+      shapes:[],
+      tempShapes:[],
+      shapesLinks:[]
       },
-      isAskClearDiagram: false
+      isAskClearDiagram: false,
+      colors:["red","blue","green","yellow"],
+      flag:false,
+      numberOfProducts:'',
     };
   },
+  mounted(){
+  },
+  created() {
+    this.interval = setInterval(() => this.changeColors(), 200);
+},
   methods: {
+    end(){this.flag=false},
+    start(){
+      if(!this.editable){
+      this.flag=true;
+      console.log( this.graphData.nodes);
+      console.log( this.graphData.links);
+      }
+    },
+    changeColors(){
+      if(this.flag){
+        var i = Math.floor(Math.random() *this.graphData.nodes.length);
+        var j = Math.floor(Math.random() *this.colors.length);     
+        let tmp = this.graphData.nodes.find(x => x.id === this.graphData.nodes[i].id);
+        if(this.graphData.nodes[i].shape == "ellipse"){
+        tmp.content.color = this.colors[j];}
+      }
+    },
     clearDiagram() {
       this.graphData.nodes = [];
       this.graphData.links = [];
@@ -195,7 +236,7 @@ export default {
         content: {
           text: item.content.text,
           url: item.content.url,
-          color: item.content.color
+          color: item.content.color,
         },
         width: parseInt(item.width) || 150,
         height: parseInt(item.height) || 60,
@@ -207,6 +248,8 @@ export default {
           y: 100 + Math.random() * 100
         }
       });
+      // this.shapes.push({id:this.graphData.nodes.id})
+      // this.shapes = [ this.graphData.nodes.id ,  this.graphData.nodes.content.text ,this.graphData.nodes.content.color,this.graphData.nodes.shape]
       this.isModalActive = false;
     },
     openNodeEdit(item) {
@@ -227,7 +270,7 @@ export default {
       tmp.content.text = item.content.text;
       tmp.content.url = item.content.url;
       tmp.content.color = item.content.color;
-      tmp.shape = item.shape;
+      tmp.shape = item.shape; 
       tmp.stroke = item.stroke;
       tmp.strokeWeight = item.strokeWeight;
       tmp.width = parseInt(item.width);
@@ -251,7 +294,8 @@ export default {
       this.editable = false;
     },
     nodeClicked(id) {
-      this.$emit("nodeClicked", id);
+      //this.$emit("nodeClicked", id);
+      console.log(id);
     },
     linkClicked(id) {
       this.$emit("linkClicked", id);
@@ -311,3 +355,56 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+$blue: #3498db;
+.btn {
+  box-sizing: border-box;
+  appearance: none;
+  background-color: #3498db;
+  border-radius: 0.6em;
+  cursor: pointer;
+  // display: flex;
+  align-self: center;
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1;
+  margin: 5px;
+  padding: 1em 1em;
+  text-decoration: none;
+  text-align: center;
+  text-transform: uppercase;
+  // font-family: 'Montserrat', sans-serif;
+  font-family:"Comic Sans MS", cursive, sans-serif;
+  font-weight: 700;
+
+  &:hover,
+  &:focus {
+    color: rgb(0, 0, 0);
+    outline: 0;
+  }
+}
+.btn2 {
+  // background: $yellow;
+  border-color: $blue;
+  color: rgb(0, 0, 0);
+  background: {
+    image: linear-gradient(45deg,$blue 50%,transparent 50%);
+    position: 100%;
+    size: 400%;
+  }
+  transition: background 300ms ease-in-out;
+  
+  &:hover {
+    background-position: 0;
+  }
+}
+.vinput{
+color:rgb(0, 0, 0);
+font-size: 1.1rem;
+font-weight: 400;
+border-color: $blue;
+border:2px solid $blue;
+border-radius: 0.6em;
+width:180px;
+}
+</style>

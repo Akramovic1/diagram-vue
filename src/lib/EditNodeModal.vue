@@ -3,8 +3,6 @@
     <transition name="item">
       <div class="form" v-if="isActive">
         <VInput v-model="newNode.content.text" placeholder="name" /><br />
-        <VInput v-model="newNode.content.url" placeholder="url" /><br />
-        <VInput v-model="newNode.content.color" placeholder="color" /><br />
         <VInput
           type="number"
           v-model="newNode.width"
@@ -18,13 +16,9 @@
         <VInput
           type="text"
           v-model="newNode.stroke"
-          placeholder="stroke"
+          placeholder="color"
         /><br />
-        <VInput
-          type="number"
-          v-model="newNode.strokeWeight"
-          placeholder="stroke weight"
-        /><br />
+        
         <VSelect v-model="newNode.shape" placeholder="Select shape">
           <option value="rectangle" selected>Rectangle</option>
           <option value="ellipse">Ellipse</option> </VSelect
@@ -71,6 +65,7 @@ export default {
   },
   methods: {
     ok() {
+      this.newNode.strokeWeight = 3;
       this.$emit("ok", this.newNode);
     },
     cancel() {

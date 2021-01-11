@@ -5,5 +5,5 @@ import DiagramEditor from "./DiagramEditor";
 import MinimalUI from "./minimal-ui";
 Vue.use(MinimalUI);
 
-export default Diagram;
+export default DiagramEditor;
 export { Diagram, DiagramEditor };

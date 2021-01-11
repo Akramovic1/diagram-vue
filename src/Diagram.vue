@@ -36,7 +36,7 @@
         </pattern>
       </defs>
       <g :transform="scaleStr">
-        <rect
+        <rect class="grid"
           x="0"
           y="0"
           :width="width"
@@ -298,5 +298,8 @@ export default {
 }
 .grab {
   cursor: grab;
+}
+.grid{
+  opacity: 0.8;
 }
 </style>
