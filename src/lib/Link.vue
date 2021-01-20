@@ -7,7 +7,7 @@
         Q ${point.x} ${point.y}
         ${calcDestination().x} ${calcDestination().y}`
       "
-      :stroke="link.color || '#ffeaa7'"
+      :stroke="link.color || 'blue'"
       stroke-width="3"
       fill="none"
       :stroke-dasharray="definePattern(link.pattern)"
@@ -24,7 +24,7 @@
       :y1="calcSource().y"
       :x2="calcDestination().x"
       :y2="calcDestination().y"
-      :stroke="link.color || '#ffeaa7'"
+      :stroke="link.color || 'blue'"
       stroke-width="3"
       fill="none"
       :stroke-dasharray="definePattern(link.pattern)"
@@ -125,11 +125,11 @@ export default {
       id: String,
       color: {
         type: String,
-        default: "#ffeaa7"
+        default: "blue"
       },
       shape: {
         type: String,
-        default: "straight"
+        default: "bezier"
       },
       pattern: {
         type: String,
@@ -214,7 +214,7 @@ export default {
       this.$emit("editLink", {
         id: this.link.id,
         content: {
-          color: this.link.color || "#ffeaa7",
+          color: this.link.color || "blue",
           shape: this.link.shape || "straight",
           pattern: this.link.pattern || "solid",
           arrow: this.link.arrow || "none"

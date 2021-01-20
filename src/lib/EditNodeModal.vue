@@ -38,9 +38,9 @@ export default {
       default() {
         return {
           id: "",
-          shape: "rectangle",
-          width: 150,
-          height: 60,
+          shape: "ellipse",
+          width: 50,
+          height: 50,
           stroke: "",
           strokeWeight: 0,
           content: {

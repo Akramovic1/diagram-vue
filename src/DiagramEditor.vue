@@ -4,7 +4,6 @@
     <VButton class="btn btn2" v-if="!editable" @click="editable = true"><i class="fas fa-edit"></i> &nbsp;Edit</VButton>
     <span v-else>
       <VButton class="btn btn2" @click="openModal">New Node</VButton>
-      <VButton class="btn btn2" @click="endEdit">Finish</VButton>
     </span>
     <VButton class="btn btn2" @click="openInputModal"><i class="fas fa-file-import"></i>  &nbsp;Import/Export</VButton>
     <VButton class="btn btn2" @click="downloadSVG"><i class="fas fa-download"></i>  &nbsp; Download SVG</VButton>
@@ -89,6 +88,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import Diagram from "./Diagram";
 import EditNodeModal from "@/lib/EditNodeModal";
 import EditLinkModal from "@/lib/EditLinkModal";
@@ -183,6 +183,8 @@ export default {
       colors:["red","blue","green","yellow"],
       flag:false,
       numberOfProducts:'',
+      arr:[],
+      firstTime:true,
     };
   },
   mounted(){
@@ -191,21 +193,48 @@ export default {
     this.interval = setInterval(() => this.changeColors(), 200);
 },
   methods: {
-    end(){this.flag=false},
+    end(){
+      this.flag = false;
+      },
     start(){
-      if(!this.editable){
-      this.flag=true;
-      console.log( this.graphData.nodes);
-      console.log( this.graphData.links);
+      if(this.numberOfProducts == ''){
+        alert("Please Enter the numbers of products !")
+      }else{
+      this.editable = false;
+      this.flag = true;
+      var arrayofIDs= [];
+      var arrayofShapes = [];
+      for(var i = 0; i < this.graphData.nodes.length; i++){
+        arrayofIDs[i] = this.graphData.nodes[i].id;
+        arrayofShapes[i] = this.graphData.nodes[i].shape;
       }
+      var source = [];
+      var dest = [];
+      for(var i = 0; i < this.graphData.links.length; i++){
+        source[i] = this.graphData.links[i].source;
+        dest[i] = this.graphData.links[i].destination;
+      }
+      if(this.firstTime){
+        axios.get("http://localhost:8085/api/start", {params:{shapesID: arrayofIDs + '', shapesSh: arrayofShapes + '', arrowsSrc: source + '', arrowsDst: dest + '', productsNum: this.numberOfProducts}}).then(res => console.log(res));
+         this.firstTime = false;
+      } else {
+        axios.get("http://localhost:8085/api/repeat", {params:{shapesID: arrayofIDs + '', shapesSh: arrayofShapes + '', arrowsSrc: source + '', arrowsDst: dest + '', productsNum: this.numberOfProducts}}).then(res => console.log(res));
+       }
+      }
+      
+      // console.log( arrayofIDs);
+      // console.log( arrayofShapes);
+      // console.log( source);
+      // console.log( dest);
     },
-    changeColors(){
+    async changeColors(){
       if(this.flag){
-        var i = Math.floor(Math.random() *this.graphData.nodes.length);
-        var j = Math.floor(Math.random() *this.colors.length);     
-        let tmp = this.graphData.nodes.find(x => x.id === this.graphData.nodes[i].id);
-        if(this.graphData.nodes[i].shape == "ellipse"){
-        tmp.content.color = this.colors[j];}
+        await axios.get("http://localhost:8085/api/update").then(res => this.arr = res.data);
+        for(var i = 0; i < this.arr.length; i++){
+          let tmp = this.graphData.nodes.find(x => x.id == this.arr[i].id);
+          console.log(this.arr[i].color);
+          tmp.content.color = this.arr[i].color;
+        }        
       }
     },
     clearDiagram() {
@@ -248,8 +277,6 @@ export default {
           y: 100 + Math.random() * 100
         }
       });
-      // this.shapes.push({id:this.graphData.nodes.id})
-      // this.shapes = [ this.graphData.nodes.id ,  this.graphData.nodes.content.text ,this.graphData.nodes.content.color,this.graphData.nodes.shape]
       this.isModalActive = false;
     },
     openNodeEdit(item) {
@@ -294,7 +321,6 @@ export default {
       this.editable = false;
     },
     nodeClicked(id) {
-      //this.$emit("nodeClicked", id);
       console.log(id);
     },
     linkClicked(id) {
@@ -363,7 +389,6 @@ $blue: #3498db;
   background-color: #3498db;
   border-radius: 0.6em;
   cursor: pointer;
-  // display: flex;
   align-self: center;
   font-size: 0.9rem;
   font-weight: 400;
@@ -373,7 +398,6 @@ $blue: #3498db;
   text-decoration: none;
   text-align: center;
   text-transform: uppercase;
-  // font-family: 'Montserrat', sans-serif;
   font-family:"Comic Sans MS", cursive, sans-serif;
   font-weight: 700;
 
@@ -384,7 +408,6 @@ $blue: #3498db;
   }
 }
 .btn2 {
-  // background: $yellow;
   border-color: $blue;
   color: rgb(0, 0, 0);
   background: {

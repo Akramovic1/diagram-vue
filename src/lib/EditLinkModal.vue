@@ -39,10 +39,10 @@ export default {
         return {
           id: "0",
           content: {
-            color: "#ffeaa7",
-            shape: "straight",
+            color: "blue",
+            shape: "bezier",
             pattern: "solid",
-            arrow: "none"
+            arrow: "dest"
           }
         };
       }

@@ -130,7 +130,7 @@ export default {
       },
       shape: {
         type: String,
-        default: "rectangle"
+        default: "ellipse"
       },
       stroke: String,
       strokeWeight: Number
